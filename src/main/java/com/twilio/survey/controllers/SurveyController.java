@@ -34,12 +34,12 @@ public class SurveyController {
     if (existingSurvey == null) {
       Survey survey = surveys.createSurvey(call.getFrom());
       twiml.append(new Say("Thanks for taking our survey."));
-      continueSurvey(survey, twiml);
+      return continueSurvey(survey, twiml);
     } else if (!existingSurvey.isDone()) {
       existingSurvey.appendResponse(new Response(call.getInput()));
       surveys.updateSurvey(existingSurvey);
       if (!existingSurvey.isDone()) {
-        continueSurvey(existingSurvey, twiml);
+        return continueSurvey(existingSurvey, twiml);
       }
     }
     twiml.append(new Say("Your responses have been recorded. Thank you for your time!"));
