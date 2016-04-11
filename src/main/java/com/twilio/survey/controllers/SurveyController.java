@@ -34,12 +34,12 @@ public class SurveyController {
     if (existingSurvey == null) {
       Survey survey = surveys.createSurvey(call.getFrom());
       twiml.append(new Say("Thanks for taking our survey."));
-      return continueSurvey(survey, twiml);
+      return continueSurvey(survey, twiml).toXML();
     } else if (!existingSurvey.isDone()) {
       existingSurvey.appendResponse(new Response(call.getInput()));
       surveys.updateSurvey(existingSurvey);
       if (!existingSurvey.isDone()) {
-        return continueSurvey(existingSurvey, twiml);
+        return continueSurvey(existingSurvey, twiml).toXML();
       }
     }
     twiml.append(new Say("Your responses have been recorded. Thank you for your time!"));
@@ -74,7 +74,7 @@ public class SurveyController {
     };
 
   // Helper methods
-  protected static String continueSurvey(Survey survey, TwiMLResponse twiml) throws TwiMLException,
+  protected static TwiMLResponse continueSurvey(Survey survey, TwiMLResponse twiml) throws TwiMLException,
       UnsupportedEncodingException {
     Question question = Server.config.getQuestions()[survey.getIndex()];
     Say say = new Say(question.getText());
@@ -91,7 +91,7 @@ public class SurveyController {
         appendNumberQuestion(twiml);
         break;
     }
-    return twiml.toXML();
+    return twiml;
   }
 
   private static void appendNumberQuestion(TwiMLResponse twiml) throws TwiMLException {

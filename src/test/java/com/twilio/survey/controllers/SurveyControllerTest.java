@@ -26,7 +26,8 @@ public class SurveyControllerTest {
     Survey survey = new Survey();
     TwiMLResponse twiml = new TwiMLResponse();
     try {
-      assertTrue(SurveyController.continueSurvey(survey, twiml).contains("Say"));
+      TwiMLResponse twiMLResponse = SurveyController.continueSurvey(survey, twiml);
+      assertTrue(twiMLResponse.toXML().contains("Say"));
     } catch (Exception e) {
       System.out.println(e.getMessage());
     }
