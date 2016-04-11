@@ -9,23 +9,23 @@ import java.io.UnsupportedEncodingException;
 
 public class TwiMLMessageFactory {
 
-    static Object firstTwiMLQuestion(Survey survey) throws TwiMLException, UnsupportedEncodingException {
+    String firstTwiMLQuestion(Survey survey) throws TwiMLException, UnsupportedEncodingException {
       TwiMLResponse response = new TwiMLResponse();
       response.append(new Say("Thanks for taking our survey."));
       return nextTwiMLQuestion(survey, response).toXML();
     }
 
-    static Verb nextTwiMLQuestion(Survey survey) throws TwiMLException, UnsupportedEncodingException {
+    Verb nextTwiMLQuestion(Survey survey) throws TwiMLException, UnsupportedEncodingException {
       return nextTwiMLQuestion(survey, null);
     }
 
-    static TwiMLResponse nextTwiMLQuestion(Survey survey, TwiMLResponse twiml) throws TwiMLException,
+    TwiMLResponse nextTwiMLQuestion(Survey survey, TwiMLResponse twiml) throws TwiMLException,
             UnsupportedEncodingException {
       Question question = Server.config.getQuestions()[survey.getIndex()];
       return buildQuestionTwiML(survey, question, twiml);
     }
 
-    private static TwiMLResponse buildQuestionTwiML(Survey survey, Question question, TwiMLResponse twiml) throws TwiMLException, UnsupportedEncodingException {
+    private TwiMLResponse buildQuestionTwiML(Survey survey, Question question, TwiMLResponse twiml) throws TwiMLException, UnsupportedEncodingException {
       TwiMLResponse response = (twiml != null) ? twiml : new TwiMLResponse();
       Say say = new Say(question.getText());
       response.append(say);
@@ -44,7 +44,7 @@ public class TwiMLMessageFactory {
       return response;
     }
 
-    private static TwiMLResponse appendNumberQuestion(TwiMLResponse twiml) throws TwiMLException {
+    private TwiMLResponse appendNumberQuestion(TwiMLResponse twiml) throws TwiMLException {
       Say numInstructions = new Say("Enter the number on your keypad, followed by the #.");
       twiml.append(numInstructions);
       Gather numberGather = new Gather();
@@ -55,7 +55,7 @@ public class TwiMLMessageFactory {
       return twiml;
     }
 
-    private static TwiMLResponse appendBooleanQuestion(TwiMLResponse twiml) throws TwiMLException {
+    private TwiMLResponse appendBooleanQuestion(TwiMLResponse twiml) throws TwiMLException {
       Say boolInstructions =
           new Say("Press 0 to respond 'No,' and press any other number to respond 'Yes.'");
       twiml.append(boolInstructions);
@@ -67,7 +67,7 @@ public class TwiMLMessageFactory {
       return twiml;
     }
 
-    private static TwiMLResponse appendTextQuestion(Survey survey, TwiMLResponse twiml) throws TwiMLException, UnsupportedEncodingException {
+    private TwiMLResponse appendTextQuestion(Survey survey, TwiMLResponse twiml) throws TwiMLException, UnsupportedEncodingException {
       Say textInstructions =
           new Say(
               "Your response will be recorded after the tone. Once you have finished recording, press the #.");
@@ -83,7 +83,7 @@ public class TwiMLMessageFactory {
       return twiml;
     }
 
-    static Object goodByeTwiMLMessage() throws TwiMLException {
+    String goodByeTwiMLMessage() throws TwiMLException {
       TwiMLResponse twiml = new TwiMLResponse();
       twiml.append(new Say("Your responses have been recorded. Thank you for your time!"));
       return twiml.toXML();

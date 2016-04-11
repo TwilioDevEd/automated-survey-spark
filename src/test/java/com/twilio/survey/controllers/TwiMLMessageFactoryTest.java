@@ -14,7 +14,7 @@ public class TwiMLMessageFactoryTest {
       Survey survey = new Survey();
       TwiMLResponse twiml = new TwiMLResponse();
       try {
-        TwiMLResponse twiMLResponse = TwiMLMessageFactory.nextTwiMLQuestion(survey, twiml);
+        TwiMLResponse twiMLResponse = new TwiMLMessageFactory().nextTwiMLQuestion(survey, twiml);
         assertTrue(twiMLResponse.toXML().contains("Say"));
       } catch (Exception e) {
         System.out.println(e.getMessage());
