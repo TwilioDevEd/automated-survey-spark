@@ -82,37 +82,49 @@ public class SurveyController {
     // Depending on the question type, create different TwiML verbs.
     switch (question.getType()) {
       case "text":
-        Say textInstructions =
-            new Say(
-                "Your response will be recorded after the tone. Once you have finished recording, press the #.");
-        twiml.append(textInstructions);
-        Record text = new Record();
-        text.setFinishOnKey("#");
-        // Use the Transcription route to receive the text of a voice response.
-        text.setTranscribe(true);
-        text.setTranscribeCallback("/interview/" + urlEncode(survey.getPhone()) + "/transcribe/"
-            + survey.getIndex());
-        twiml.append(text);
+        appendTextQuestion(survey, twiml);
         break;
       case "boolean":
-        Say boolInstructions =
-            new Say("Press 0 to respond 'No,' and press any other number to respond 'Yes.'");
-        twiml.append(boolInstructions);
-        Gather booleanGather = new Gather();
-        // Listen only for one digit.
-        booleanGather.setNumDigits(1);
-        twiml.append(booleanGather);
+        appendBooleanQuestion(twiml);
         break;
       case "number":
-        Say numInstructions = new Say("Enter the number on your keypad, followed by the #.");
-        twiml.append(numInstructions);
-        Gather numberGather = new Gather();
-        // Listen until a user presses "#"
-        numberGather.setFinishOnKey("#");
-        twiml.append(numberGather);
+        appendNumberQuestion(twiml);
         break;
     }
     return twiml.toXML();
+  }
+
+  private static void appendNumberQuestion(TwiMLResponse twiml) throws TwiMLException {
+    Say numInstructions = new Say("Enter the number on your keypad, followed by the #.");
+    twiml.append(numInstructions);
+    Gather numberGather = new Gather();
+    // Listen until a user presses "#"
+    numberGather.setFinishOnKey("#");
+    twiml.append(numberGather);
+  }
+
+  private static void appendBooleanQuestion(TwiMLResponse twiml) throws TwiMLException {
+    Say boolInstructions =
+        new Say("Press 0 to respond 'No,' and press any other number to respond 'Yes.'");
+    twiml.append(boolInstructions);
+    Gather booleanGather = new Gather();
+    // Listen only for one digit.
+    booleanGather.setNumDigits(1);
+    twiml.append(booleanGather);
+  }
+
+  private static void appendTextQuestion(Survey survey, TwiMLResponse twiml) throws TwiMLException, UnsupportedEncodingException {
+    Say textInstructions =
+        new Say(
+            "Your response will be recorded after the tone. Once you have finished recording, press the #.");
+    twiml.append(textInstructions);
+    Record text = new Record();
+    text.setFinishOnKey("#");
+    // Use the Transcription route to receive the text of a voice response.
+    text.setTranscribe(true);
+    text.setTranscribeCallback("/interview/" + urlEncode(survey.getPhone()) + "/transcribe/"
+        + survey.getIndex());
+    twiml.append(text);
   }
 
   // Spark has no built-in body parser, so let's roll our own.
