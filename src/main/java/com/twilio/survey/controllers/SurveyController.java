@@ -1,16 +1,12 @@
 package com.twilio.survey.controllers;
 
+import com.twilio.sdk.verbs.*;
 import com.twilio.survey.Server;
 import com.twilio.survey.models.Response;
 import com.twilio.survey.models.SurveyService;
 import com.twilio.survey.models.Survey;
 import com.twilio.survey.util.IncomingCall;
 import com.twilio.survey.util.Question;
-import com.twilio.sdk.verbs.Gather;
-import com.twilio.sdk.verbs.Record;
-import com.twilio.sdk.verbs.Say;
-import com.twilio.sdk.verbs.TwiMLException;
-import com.twilio.sdk.verbs.TwiMLResponse;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
@@ -29,22 +25,43 @@ public class SurveyController {
   // Main interview loop.
   public static Route interview = (request, response) -> {
     IncomingCall call = new IncomingCall(parseBody(request.body()));
-    TwiMLResponse twiml = new TwiMLResponse();
+
     Survey existingSurvey = surveys.getSurvey(call.getFrom());
     if (existingSurvey == null) {
       Survey survey = surveys.createSurvey(call.getFrom());
-      twiml.append(new Say("Thanks for taking our survey."));
-      return continueSurvey(survey, twiml).toXML();
+      return firstTwiMLQuestion(survey);
     } else if (!existingSurvey.isDone()) {
       existingSurvey.appendResponse(new Response(call.getInput()));
       surveys.updateSurvey(existingSurvey);
       if (!existingSurvey.isDone()) {
-        return continueSurvey(existingSurvey, twiml).toXML();
+        return nextTwiMLQuestion(existingSurvey).toXML();
       }
     }
+    return goodByeTwiMLMessage();
+  };
+
+  private static Object goodByeTwiMLMessage() throws TwiMLException {
+    TwiMLResponse twiml = new TwiMLResponse();
     twiml.append(new Say("Your responses have been recorded. Thank you for your time!"));
     return twiml.toXML();
-  };
+  }
+
+  private static Object firstTwiMLQuestion(Survey survey) throws TwiMLException, UnsupportedEncodingException {
+    TwiMLResponse response = new TwiMLResponse();
+    response.append(new Say("Thanks for taking our survey."));
+    return nextTwiMLQuestion(survey, response).toXML();
+  }
+
+  private static Verb nextTwiMLQuestion(Survey survey) throws TwiMLException, UnsupportedEncodingException {
+    return nextTwiMLQuestion(survey, null);
+  }
+
+  protected static TwiMLResponse nextTwiMLQuestion(Survey survey, TwiMLResponse twiml) throws TwiMLException,
+      UnsupportedEncodingException {
+    Question question = Server.config.getQuestions()[survey.getIndex()];
+    return buildQuestionTwiML(survey, question, twiml);
+  }
+
 
   // Results accessor route
   public static Route results = (request, response) -> {
@@ -74,36 +91,38 @@ public class SurveyController {
     };
 
   // Helper methods
-  protected static TwiMLResponse continueSurvey(Survey survey, TwiMLResponse twiml) throws TwiMLException,
-      UnsupportedEncodingException {
-    Question question = Server.config.getQuestions()[survey.getIndex()];
+
+  private static TwiMLResponse buildQuestionTwiML(Survey survey, Question question, TwiMLResponse twiml) throws TwiMLException, UnsupportedEncodingException {
+    TwiMLResponse response = (twiml != null) ? twiml : new TwiMLResponse();
     Say say = new Say(question.getText());
-    twiml.append(say);
+    response.append(say);
     // Depending on the question type, create different TwiML verbs.
     switch (question.getType()) {
       case "text":
-        appendTextQuestion(survey, twiml);
+        response = appendTextQuestion(survey, response);
         break;
       case "boolean":
-        appendBooleanQuestion(twiml);
+        response = appendBooleanQuestion(response);
         break;
       case "number":
-        appendNumberQuestion(twiml);
+        response = appendNumberQuestion(response);
         break;
     }
-    return twiml;
+    return response;
   }
 
-  private static void appendNumberQuestion(TwiMLResponse twiml) throws TwiMLException {
+  private static TwiMLResponse appendNumberQuestion(TwiMLResponse twiml) throws TwiMLException {
     Say numInstructions = new Say("Enter the number on your keypad, followed by the #.");
     twiml.append(numInstructions);
     Gather numberGather = new Gather();
     // Listen until a user presses "#"
     numberGather.setFinishOnKey("#");
     twiml.append(numberGather);
+
+    return twiml;
   }
 
-  private static void appendBooleanQuestion(TwiMLResponse twiml) throws TwiMLException {
+  private static TwiMLResponse appendBooleanQuestion(TwiMLResponse twiml) throws TwiMLException {
     Say boolInstructions =
         new Say("Press 0 to respond 'No,' and press any other number to respond 'Yes.'");
     twiml.append(boolInstructions);
@@ -111,9 +130,11 @@ public class SurveyController {
     // Listen only for one digit.
     booleanGather.setNumDigits(1);
     twiml.append(booleanGather);
+
+    return twiml;
   }
 
-  private static void appendTextQuestion(Survey survey, TwiMLResponse twiml) throws TwiMLException, UnsupportedEncodingException {
+  private static TwiMLResponse appendTextQuestion(Survey survey, TwiMLResponse twiml) throws TwiMLException, UnsupportedEncodingException {
     Say textInstructions =
         new Say(
             "Your response will be recorded after the tone. Once you have finished recording, press the #.");
@@ -125,6 +146,8 @@ public class SurveyController {
     text.setTranscribeCallback("/interview/" + urlEncode(survey.getPhone()) + "/transcribe/"
         + survey.getIndex());
     twiml.append(text);
+
+    return twiml;
   }
 
   // Spark has no built-in body parser, so let's roll our own.
