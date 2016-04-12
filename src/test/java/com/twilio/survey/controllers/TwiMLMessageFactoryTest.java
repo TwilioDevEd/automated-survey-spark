@@ -1,6 +1,5 @@
 package com.twilio.survey.controllers;
 
-import com.twilio.sdk.verbs.TwiMLResponse;
 import com.twilio.survey.models.Survey;
 import org.junit.Test;
 
@@ -13,8 +12,8 @@ public class TwiMLMessageFactoryTest {
       // will receive some feedback.
       Survey survey = new Survey();
       try {
-        TwiMLResponse twiMLResponse = new TwiMLMessageFactory().nextTwiMLQuestion(survey);
-        assertTrue(twiMLResponse.toXML().contains("Say"));
+        String twiMLResponse = new TwiMLMessageFactory().nextTwiMLQuestion(survey);
+        assertTrue(twiMLResponse.contains("Say"));
       } catch (Exception e) {
         System.out.println(e.getMessage());
       }

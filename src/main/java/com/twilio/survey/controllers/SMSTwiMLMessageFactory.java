@@ -15,12 +15,16 @@ public class SMSTwiMLMessageFactory extends AbstractMessageFactory {
     public String firstTwiMLQuestion(Survey survey) throws TwiMLException {
         TwiMLResponse response = new TwiMLResponse();
         response.append(new Message("Thanks for taking our survey."));
-        return response.toXML();
+        return tempMethod(survey, response);
     }
 
     public String nextTwiMLQuestion(Survey survey) throws TwiMLException {
+        return tempMethod(survey, null);
+    }
+
+    private String tempMethod(Survey survey, TwiMLResponse baseResponse) throws TwiMLException {
         Question question = Server.config.getQuestions()[survey.getIndex()];
-        TwiMLResponse twiMLResponse = new TwiMLResponse();
+        TwiMLResponse twiMLResponse = baseResponse == null ? new TwiMLResponse() : baseResponse;
         twiMLResponse.append(new Message(question.getText()));
         return twiMLResponse.toXML();
     }

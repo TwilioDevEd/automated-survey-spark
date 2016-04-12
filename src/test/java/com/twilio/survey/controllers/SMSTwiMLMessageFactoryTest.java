@@ -37,13 +37,15 @@ public class SMSTwiMLMessageFactoryTest {
 
         SMSTwiMLMessageFactory smsFactory = new SMSTwiMLMessageFactory();
 
-        String twiml = smsFactory.firstTwiMLQuestion();
+        String twiml = smsFactory.firstTwiMLQuestion(new Survey("000000"));
 
         Document twiMLDocument = XMLTestHelper.createDocumentFromXml(twiml);
         Node responseNode = twiMLDocument.getElementsByTagName("Response").item(0);
 
         assertThat(responseNode, hasXPath("/Response/Message[text() = " +
                 "'Thanks for taking our survey.']"));
+        assertThat(responseNode, hasXPath("/Response/Message[text() = " +
+                "'Please tell us your age.']"));
     }
 
     @Test

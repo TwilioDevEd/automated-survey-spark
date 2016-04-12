@@ -22,8 +22,9 @@ public class SurveyController {
 
   // Main interview loop.
   public static Route interview = (request, response) -> {
-    IncomingCall call = new IncomingCall(parseBody(request.body()));
-    TwiMLMessageFactory messageFactory = new TwiMLMessageFactory();
+    Map<String, String> parameters = parseBody(request.body());
+    IncomingCall call = new IncomingCall(parameters);
+    AbstractMessageFactory messageFactory = AbstractMessageFactory.createInstance(parameters);
 
     Survey existingSurvey = surveys.getSurvey(call.getFrom());
     if (existingSurvey == null) {
@@ -33,7 +34,7 @@ public class SurveyController {
       existingSurvey.appendResponse(new Response(call.getInput()));
       surveys.updateSurvey(existingSurvey);
       if (!existingSurvey.isDone()) {
-        return messageFactory.nextTwiMLQuestion(existingSurvey).toXML();
+        return messageFactory.nextTwiMLQuestion(existingSurvey);
       }
     }
     return messageFactory.goodByeTwiMLMessage();
