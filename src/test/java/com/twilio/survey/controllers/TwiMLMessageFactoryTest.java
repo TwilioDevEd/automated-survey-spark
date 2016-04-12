@@ -12,9 +12,8 @@ public class TwiMLMessageFactoryTest {
       // Confirms that, if a TwiML response is returned, the XML includes a "Say" verb, and the user
       // will receive some feedback.
       Survey survey = new Survey();
-      TwiMLResponse twiml = new TwiMLResponse();
       try {
-        TwiMLResponse twiMLResponse = new TwiMLMessageFactory().nextTwiMLQuestion(survey, twiml);
+        TwiMLResponse twiMLResponse = new TwiMLMessageFactory().nextTwiMLQuestion(survey);
         assertTrue(twiMLResponse.toXML().contains("Say"));
       } catch (Exception e) {
         System.out.println(e.getMessage());

@@ -7,7 +7,7 @@ import com.twilio.survey.util.Question;
 
 import java.io.UnsupportedEncodingException;
 
-public class TwiMLMessageFactory {
+public class TwiMLMessageFactory extends AbstractMessageFactory {
 
     String firstTwiMLQuestion(Survey survey) throws TwiMLException, UnsupportedEncodingException {
       TwiMLResponse response = new TwiMLResponse();
@@ -15,11 +15,11 @@ public class TwiMLMessageFactory {
       return nextTwiMLQuestion(survey, response).toXML();
     }
 
-    Verb nextTwiMLQuestion(Survey survey) throws TwiMLException, UnsupportedEncodingException {
-      return nextTwiMLQuestion(survey, null);
+    String nextTwiMLQuestion(Survey survey) throws TwiMLException, UnsupportedEncodingException {
+      return nextTwiMLQuestion(survey, null).toXML();
     }
 
-    TwiMLResponse nextTwiMLQuestion(Survey survey, TwiMLResponse twiml) throws TwiMLException,
+    private TwiMLResponse nextTwiMLQuestion(Survey survey, TwiMLResponse twiml) throws TwiMLException,
             UnsupportedEncodingException {
       Question question = Server.config.getQuestions()[survey.getIndex()];
       return buildQuestionTwiML(survey, question, twiml);
