@@ -23,7 +23,7 @@ public class SurveyController {
   // Main interview loop.
   public static Route interview = (request, response) -> {
     Map<String, String> parameters = parseBody(request.body());
-    IncomingCall call = new IncomingCall(parameters);
+    IncomingCall call = IncomingCall.createInstance(parameters);
     AbstractMessageFactory messageFactory = AbstractMessageFactory.createInstance(parameters);
 
     Survey existingSurvey = surveys.getSurvey(call.getFrom());
@@ -55,7 +55,7 @@ public class SurveyController {
 
   // Transcription route (called by Twilio's callback, once transcription is complete)
   public static Route transcribe = (request, response) -> {
-    IncomingCall call = new IncomingCall(parseBody(request.body()));
+    IncomingCall call = IncomingCall.createInstance(parseBody(request.body()));
       // Get the phone and question numbers from the URL parameters provided by the "Record" verb
       String surveyId = request.params(":phone");
       int questionId = Integer.parseInt(request.params(":question"));
