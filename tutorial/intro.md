@@ -1,14 +1,13 @@
 ## About This Application
 
 This [Spark](http://sparkjava.com) app uses the [Twilio API](https://www.twilio.com/docs/api/twiml)
-to create an automated survey conducted over a phone call. Callers will
-interact with this application over the phone, by calling your Twilio number,
-while you can view the results on a dynamic dashboard.
+to create an automated survey conducted over SMS or phone call. Callers will
+interact with this application over the phone, while you can view the results on a dynamic dashboard.
 
-Check out the source code for this application on [GitHub](http://github.com/twilio/automated-survey-java).
+Check out the source code for this application on [GitHub](//github.com/TwilioDevEd/automated-survey-spark).
 
 In this tutorial, we'll highlight the code that interacts with Twilio and in
- turn makes the application tick. [Check out the project README on GitHub](http://github.com/twilio/automated-survey-java)
+ turn makes the application tick. [Check out the project README on GitHub](//github.com/TwilioDevEd/automated-survey-spark)
  to see how to run the code yourself.
 
 Let's get started! Click the right arrow above to advance to the next code snippet.

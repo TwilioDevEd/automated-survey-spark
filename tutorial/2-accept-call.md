@@ -1,8 +1,8 @@
 ## Accept a call
-Every time your Twilio number receives a call, Twilio will send an HTTP request 
+Every time your Twilio number receives a call or a SMS, Twilio will send an HTTP request 
 to the application, asking what to do next. The application responds with 
 [TwiML](https://www.twilio.com/docs/api/twiml) that describes the action 
-(```<Say>``` a phrase, ```<Gather>``` input, among others).
+(```<Say>``` a phrase, ```<Gather>``` input, `<Message>` a SMS, among others).
 
 First, your Twilio number must be configured to make requests to the 
 ```/interview``` route of this application. Go to your 
