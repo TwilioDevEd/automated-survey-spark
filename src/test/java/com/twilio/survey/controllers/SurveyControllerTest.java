@@ -1,36 +1,19 @@
 package com.twilio.survey.controllers;
 
-import static org.junit.Assert.*;
-
-import com.twilio.sdk.verbs.TwiMLResponse;
 import com.twilio.survey.Server;
-import com.twilio.survey.models.Survey;
 import com.twilio.survey.util.Config;
-
 import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.io.UnsupportedEncodingException;
+
+import static org.junit.Assert.assertEquals;
 
 public class SurveyControllerTest {
   @BeforeClass
   public static void setUpBeforeClass() throws Exception {
     Config config = new Config();
     Server.config = config;
-  }
-
-  @Test
-  public void testContinueSurvey() {
-    // Confirms that, if a TwiML response is returned, the XML includes a "Say" verb, and the user
-    // will receive some feedback.
-    Survey survey = new Survey();
-    TwiMLResponse twiml = new TwiMLResponse();
-    try {
-      assertTrue(SurveyController.continueSurvey(survey, twiml).contains("Say"));
-    } catch (Exception e) {
-      System.out.println(e.getMessage());
-    }
-
   }
 
   @Test

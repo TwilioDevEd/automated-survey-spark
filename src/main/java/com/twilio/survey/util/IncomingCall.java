@@ -5,24 +5,30 @@ import java.util.Map;
 public class IncomingCall {
 
   private String from;
-  private String recordingUrl;
-  private String digits;
+  private String input;
   private String transcriptionText;
 
-  // Constructor
-  public IncomingCall(String from, String recordingUrl, String digits, String transcriptionText) {
-    this.from = from;
-    this.recordingUrl = recordingUrl;
-    this.digits = digits;
-    this.transcriptionText = transcriptionText;
+  public static IncomingCall createInstance(Map<String, String> parameters) {
+    String retrievedInput;
+    if (parameters.containsKey("MessageSid")) {
+      retrievedInput = parameters.get("Body");
+    } else {
+      retrievedInput = parameters.containsKey("RecordingUrl") ? parameters.get("RecordingUrl") :
+          parameters.get("Digits");
+    }
+
+    return new IncomingCall(parameters.get("From"), retrievedInput, parameters.get("TranscriptionText"));
   }
 
-  public IncomingCall(Map<String, String> parsedBody) {
-    this(parsedBody.get("From"), parsedBody.get("RecordingUrl"), parsedBody.get("Digits"), parsedBody.get("TranscriptionText"));
+  // Constructor
+  private IncomingCall(String from, String input, String transcriptionText) {
+    this.from = from;
+    this.input = input;
+    this.transcriptionText = transcriptionText;
   }
   
   public IncomingCall() {
-    this("+0000000000", null, null, null);
+    this("+0000000000", null, null);
   }
 
   // Accessors
@@ -31,11 +37,7 @@ public class IncomingCall {
   }
 
   public String getInput() {
-    if (recordingUrl != null) {
-      return recordingUrl;
-    } else {
-      return digits;
-    }
+    return input;
   }
 
   public String getTranscriptionText() {

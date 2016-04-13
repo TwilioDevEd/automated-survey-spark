@@ -5,12 +5,6 @@ import com.twilio.survey.models.Response;
 import com.twilio.survey.models.SurveyService;
 import com.twilio.survey.models.Survey;
 import com.twilio.survey.util.IncomingCall;
-import com.twilio.survey.util.Question;
-import com.twilio.sdk.verbs.Gather;
-import com.twilio.sdk.verbs.Record;
-import com.twilio.sdk.verbs.Say;
-import com.twilio.sdk.verbs.TwiMLException;
-import com.twilio.sdk.verbs.TwiMLResponse;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
@@ -28,23 +22,24 @@ public class SurveyController {
 
   // Main interview loop.
   public static Route interview = (request, response) -> {
-    IncomingCall call = new IncomingCall(parseBody(request.body()));
-    TwiMLResponse twiml = new TwiMLResponse();
+    Map<String, String> parameters = parseBody(request.body());
+    IncomingCall call = IncomingCall.createInstance(parameters);
+    AbstractMessageFactory messageFactory = AbstractMessageFactory.createInstance(parameters);
+
     Survey existingSurvey = surveys.getSurvey(call.getFrom());
     if (existingSurvey == null) {
       Survey survey = surveys.createSurvey(call.getFrom());
-      twiml.append(new Say("Thanks for taking our survey."));
-      continueSurvey(survey, twiml);
+      return messageFactory.firstTwiMLQuestion(survey);
     } else if (!existingSurvey.isDone()) {
       existingSurvey.appendResponse(new Response(call.getInput()));
       surveys.updateSurvey(existingSurvey);
       if (!existingSurvey.isDone()) {
-        continueSurvey(existingSurvey, twiml);
+        return messageFactory.nextTwiMLQuestion(existingSurvey);
       }
     }
-    twiml.append(new Say("Your responses have been recorded. Thank you for your time!"));
-    return twiml.toXML();
+    return messageFactory.goodByeTwiMLMessage();
   };
+
 
   // Results accessor route
   public static Route results = (request, response) -> {
@@ -60,7 +55,7 @@ public class SurveyController {
 
   // Transcription route (called by Twilio's callback, once transcription is complete)
   public static Route transcribe = (request, response) -> {
-    IncomingCall call = new IncomingCall(parseBody(request.body()));
+    IncomingCall call = IncomingCall.createInstance(parseBody(request.body()));
       // Get the phone and question numbers from the URL parameters provided by the "Record" verb
       String surveyId = request.params(":phone");
       int questionId = Integer.parseInt(request.params(":question"));
@@ -74,46 +69,6 @@ public class SurveyController {
     };
 
   // Helper methods
-  protected static String continueSurvey(Survey survey, TwiMLResponse twiml) throws TwiMLException,
-      UnsupportedEncodingException {
-    Question question = Server.config.getQuestions()[survey.getIndex()];
-    Say say = new Say(question.getText());
-    twiml.append(say);
-    // Depending on the question type, create different TwiML verbs.
-    switch (question.getType()) {
-      case "text":
-        Say textInstructions =
-            new Say(
-                "Your response will be recorded after the tone. Once you have finished recording, press the #.");
-        twiml.append(textInstructions);
-        Record text = new Record();
-        text.setFinishOnKey("#");
-        // Use the Transcription route to receive the text of a voice response.
-        text.setTranscribe(true);
-        text.setTranscribeCallback("/interview/" + urlEncode(survey.getPhone()) + "/transcribe/"
-            + survey.getIndex());
-        twiml.append(text);
-        break;
-      case "boolean":
-        Say boolInstructions =
-            new Say("Press 0 to respond 'No,' and press any other number to respond 'Yes.'");
-        twiml.append(boolInstructions);
-        Gather booleanGather = new Gather();
-        // Listen only for one digit.
-        booleanGather.setNumDigits(1);
-        twiml.append(booleanGather);
-        break;
-      case "number":
-        Say numInstructions = new Say("Enter the number on your keypad, followed by the #.");
-        twiml.append(numInstructions);
-        Gather numberGather = new Gather();
-        // Listen until a user presses "#"
-        numberGather.setFinishOnKey("#");
-        twiml.append(numberGather);
-        break;
-    }
-    return twiml.toXML();
-  }
 
   // Spark has no built-in body parser, so let's roll our own.
   public static Map<String, String> parseBody(String body) throws UnsupportedEncodingException {
