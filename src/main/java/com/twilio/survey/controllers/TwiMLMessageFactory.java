@@ -6,6 +6,7 @@ import com.twilio.survey.models.Survey;
 import com.twilio.survey.util.Question;
 
 import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 
 public class TwiMLMessageFactory extends AbstractMessageFactory {
 
@@ -67,7 +68,9 @@ public class TwiMLMessageFactory extends AbstractMessageFactory {
       return twiml;
     }
 
-    private TwiMLResponse appendTextQuestion(Survey survey, TwiMLResponse twiml) throws TwiMLException, UnsupportedEncodingException {
+    private TwiMLResponse appendTextQuestion(Survey survey, TwiMLResponse twiml)
+            throws TwiMLException, UnsupportedEncodingException {
+
       Say textInstructions =
           new Say(
               "Your response will be recorded after the tone. Once you have finished recording, press the #.");
@@ -76,11 +79,16 @@ public class TwiMLMessageFactory extends AbstractMessageFactory {
       text.setFinishOnKey("#");
       // Use the Transcription route to receive the text of a voice response.
       text.setTranscribe(true);
-      text.setTranscribeCallback("/interview/" + SurveyController.urlEncode(survey.getPhone()) + "/transcribe/"
-          + survey.getIndex());
+      text.setTranscribeCallback(String.format("/interview/%s/transcribe/%s",
+              urlEncode(survey.getPhone()), survey.getIndex()));
       twiml.append(text);
 
       return twiml;
+    }
+
+    // Wrap the URLEncoder and URLDecoder for cleanliness.
+    private String urlEncode(String s) throws UnsupportedEncodingException {
+        return URLEncoder.encode(s, "utf-8");
     }
 
     String goodByeTwiMLMessage() throws TwiMLException {

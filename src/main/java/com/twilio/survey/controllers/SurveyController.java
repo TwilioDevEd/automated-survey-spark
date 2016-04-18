@@ -85,11 +85,6 @@ public class SurveyController {
     return parsedParams;
   }
 
-  // Wrap the URLEncoder and URLDecoder for cleanliness.
-  public static String urlEncode(String s) throws UnsupportedEncodingException {
-    return URLEncoder.encode(s, "utf-8");
-  }
-
   public static String urlDecode(String s) throws UnsupportedEncodingException {
     return URLDecoder.decode(s, "utf-8");
   }
