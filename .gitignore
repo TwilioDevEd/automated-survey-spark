@@ -17,3 +17,6 @@ target/
 *.launch
 .cproject
 .env
+
+.idea/
+*.iml
