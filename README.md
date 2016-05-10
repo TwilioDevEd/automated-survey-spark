@@ -3,7 +3,7 @@
 
 An application example that implements an Automated Survey using Twilio.
 
-## Herokui
+## Heroku
 [![Deploy](https://www.herokucdn.com/deploy/button.png)](https://heroku.com/deploy)  
 Heroku will automatically configure the environment variables necessary to launch this application. Heroku automatically uses a ["Free" dyno](https://www.heroku.com/pricing), and provisions a ["Sandbox" MongoLab](https://mongolab.com/plans/pricing/) instance, so you can play around with this application at no charge.
 
