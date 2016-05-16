@@ -14,8 +14,8 @@ Heroku will automatically configure the environment variables necessary to launc
 1. The application uses Maven to manage dependencies.
 
 1. Use the following variables to configure this application when running it locally. Heroku will automatically configure these variables for you.
-- ```PORT```: the application's port number (defaults to port 4567).
-- ```MONGO_URI```: the address of a MongoDB instance to use (defaults to a MongoDB instance listening on the localhost).
+- `PORT`: the application's port number (defaults to port 4567).
+- `MONGO_URI`: the address of a MongoDB instance to use (defaults to a MongoDB instance listening on the localhost).
 
 1. Configure Twilio to call your webhooks.
 
@@ -30,9 +30,9 @@ Heroku will automatically configure the environment variables necessary to launc
 
    ![Configure Voice](http://howtodocs.s3.amazonaws.com/twilio-number-config-all-med.gif)
 
-1. Run ```mvn install``` to run the accompanying test suite, and build the application.
+1. Run `mvn install` to run the accompanying test suite, and build the application.
 
-1. Use ```java -jar target/server.jar``` to run the application.
+1. Use `java -jar target/server.jar` to run the application.
 
 1. Expose the application to the wider Internet using [ngrok](https://ngrok.com/).
 
