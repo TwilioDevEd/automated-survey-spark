@@ -1,8 +1,11 @@
 package com.twilio.survey.controllers;
 
 import com.twilio.sdk.verbs.TwiMLException;
+import com.twilio.survey.Server;
 import com.twilio.survey.models.Survey;
+import com.twilio.survey.util.Config;
 import org.junit.Assert;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
@@ -15,6 +18,10 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.xml.HasXPath.hasXPath;
 
 public class SMSTwiMLMessageFactoryTest {
+    @BeforeClass
+    public static void setUpBeforeClass() throws Exception {
+        Server.config = new Config();
+    }
 
     @Test
     public void shouldBuildATwimMLGoodByeMessageForSMS() throws IOException,

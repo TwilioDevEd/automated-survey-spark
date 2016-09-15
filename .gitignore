@@ -4,12 +4,11 @@
 build/
 bin/
 target/
- 
-*.jar
+
 *.war
 *.ear
 *.db
- 
+
 *.tmp
 *.swp
 .classpath

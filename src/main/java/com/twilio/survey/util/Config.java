@@ -29,8 +29,8 @@ public class Config {
     if (env.containsKey("PORT")) {
       port = Integer.valueOf(env.get("PORT"));
     }
-    if (env.containsKey("MONGOLAB_URI")) {
-      envMongoURL = env.get("MONGOLAB_URI");
+    if (env.containsKey("MONGODB_URI")) {
+      envMongoURL = env.get("MONGODB_URI");
     } else if (env.containsKey("MONGO_URL")) {
       envMongoURL = env.get("MONGO_URL");
     }
