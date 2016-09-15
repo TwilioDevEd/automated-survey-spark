@@ -3,8 +3,8 @@ package com.twilio.survey.controllers;
 import java.io.UnsupportedEncodingException;
 import java.util.Map;
 
-import com.twilio.sdk.verbs.TwiMLException;
 import com.twilio.survey.models.Survey;
+import com.twilio.twiml.TwiMLException;
 
 public abstract class AbstractMessageFactory {
 

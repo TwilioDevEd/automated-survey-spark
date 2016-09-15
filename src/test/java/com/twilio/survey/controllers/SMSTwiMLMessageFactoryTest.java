@@ -7,6 +7,7 @@ import java.io.IOException;
 
 import javax.xml.parsers.ParserConfigurationException;
 
+import com.twilio.twiml.TwiMLException;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -14,7 +15,6 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 
-import com.twilio.sdk.verbs.TwiMLException;
 import com.twilio.survey.Server;
 import com.twilio.survey.models.Survey;
 import com.twilio.survey.util.Config;
@@ -36,7 +36,7 @@ public class SMSTwiMLMessageFactoryTest {
     Document twiMLDocument = XMLTestHelper.createDocumentFromXml(twiml);
     Node responseNode = twiMLDocument.getElementsByTagName("Response").item(0);
 
-    assertThat(responseNode, hasXPath("/Response/Message[text() = "
+    assertThat(responseNode, hasXPath("/Response/Message/Body[text() = "
         + "'Your responses have been recorded. Thank you for your time!']"));
   }
 
@@ -52,9 +52,9 @@ public class SMSTwiMLMessageFactoryTest {
     Node responseNode = twiMLDocument.getElementsByTagName("Response").item(0);
 
     assertThat(responseNode,
-        hasXPath("/Response/Message[text() = " + "'Thanks for taking our survey.']"));
+        hasXPath("/Response/Message/Body[text() = " + "'Thanks for taking our survey.']"));
     assertThat(responseNode,
-        hasXPath("/Response/Message[text() = " + "'Please tell us your age.']"));
+        hasXPath("/Response/Message/Body[text() = " + "'Please tell us your age.']"));
   }
 
   @Test
@@ -70,6 +70,6 @@ public class SMSTwiMLMessageFactoryTest {
     Node responseNode = twiMLDocument.getElementsByTagName("Response").item(0);
 
     Assert.assertThat(responseNode,
-        hasXPath("/Response/Message[text() = 'Please tell us your age.']"));
+        hasXPath("/Response/Message/Body[text() = 'Please tell us your age.']"));
   }
 }
