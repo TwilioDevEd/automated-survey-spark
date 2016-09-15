@@ -1,13 +1,14 @@
 package com.twilio.survey.controllers;
 
-import com.twilio.survey.Server;
-import com.twilio.survey.util.Config;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import static org.junit.Assert.assertEquals;
 
 import java.io.UnsupportedEncodingException;
 
-import static org.junit.Assert.assertEquals;
+import org.junit.BeforeClass;
+import org.junit.Test;
+
+import com.twilio.survey.Server;
+import com.twilio.survey.util.Config;
 
 public class SurveyControllerTest {
   @BeforeClass

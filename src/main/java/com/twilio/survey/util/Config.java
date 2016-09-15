@@ -4,8 +4,8 @@ import java.io.File;
 import java.util.Map;
 import java.util.Scanner;
 
+import com.google.gson.Gson;
 import com.mongodb.MongoClientURI;
-import com.google.gson.*; // TODO: Resolve wildcard import
 
 
 public class Config {
@@ -29,10 +29,8 @@ public class Config {
     if (env.containsKey("PORT")) {
       port = Integer.valueOf(env.get("PORT"));
     }
-    if (env.containsKey("MONGOLAB_URI")) {
-      envMongoURL = env.get("MONGOLAB_URI");
-    } else if (env.containsKey("MONGO_URL")) {
-      envMongoURL = env.get("MONGO_URL");
+    if (env.containsKey("MONGODB_URI")) {
+      envMongoURL = env.get("MONGODB_URI");
     }
 
     mongoURI = new MongoClientURI(envMongoURL);

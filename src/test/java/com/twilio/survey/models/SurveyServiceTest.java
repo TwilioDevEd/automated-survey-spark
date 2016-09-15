@@ -1,12 +1,13 @@
 package com.twilio.survey.models;
 
-import static org.junit.Assert.*;
-
-import com.twilio.survey.Server;
-import com.twilio.survey.util.Config;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 import org.junit.BeforeClass;
 import org.junit.Test;
+
+import com.twilio.survey.Server;
+import com.twilio.survey.util.Config;
 
 public class SurveyServiceTest {
 
