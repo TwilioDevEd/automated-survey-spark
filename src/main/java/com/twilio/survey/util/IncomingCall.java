@@ -8,27 +8,28 @@ public class IncomingCall {
   private String input;
   private String transcriptionText;
 
-  public static IncomingCall createInstance(Map<String, String> parameters) {
-    String retrievedInput;
-    if (parameters.containsKey("MessageSid")) {
-      retrievedInput = parameters.get("Body");
-    } else {
-      retrievedInput = parameters.containsKey("RecordingUrl") ? parameters.get("RecordingUrl") :
-          parameters.get("Digits");
-    }
-
-    return new IncomingCall(parameters.get("From"), retrievedInput, parameters.get("TranscriptionText"));
-  }
-
   // Constructor
   private IncomingCall(String from, String input, String transcriptionText) {
     this.from = from;
     this.input = input;
     this.transcriptionText = transcriptionText;
   }
-  
+
   public IncomingCall() {
     this("+0000000000", null, null);
+  }
+
+  public static IncomingCall createInstance(Map<String, String> parameters) {
+    String retrievedInput;
+    if (parameters.containsKey("MessageSid")) {
+      retrievedInput = parameters.get("Body");
+    } else {
+      retrievedInput = parameters.containsKey("RecordingUrl") ? parameters.get("RecordingUrl")
+          : parameters.get("Digits");
+    }
+
+    return new IncomingCall(parameters.get("From"), retrievedInput,
+        parameters.get("TranscriptionText"));
   }
 
   // Accessors

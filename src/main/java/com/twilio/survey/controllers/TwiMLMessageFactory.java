@@ -1,91 +1,109 @@
 package com.twilio.survey.controllers;
 
-import com.twilio.sdk.verbs.*;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+
 import com.twilio.survey.Server;
 import com.twilio.survey.models.Survey;
 import com.twilio.survey.util.Question;
-
-import java.io.UnsupportedEncodingException;
+import com.twilio.twiml.*;
 
 public class TwiMLMessageFactory extends AbstractMessageFactory {
 
-    String firstTwiMLQuestion(Survey survey) throws TwiMLException, UnsupportedEncodingException {
-      TwiMLResponse response = new TwiMLResponse();
-      response.append(new Say("Thanks for taking our survey."));
-      return nextTwiMLQuestion(survey, response).toXML();
+  String firstTwiMLQuestion(Survey survey) throws TwiMLException, UnsupportedEncodingException {
+    VoiceResponse.Builder voiceResponseBuilder = new VoiceResponse.Builder()
+        .say(new Say.Builder("Thanks for taking our survey.").build());
+
+    return nextTwiMLQuestion(survey, voiceResponseBuilder).toXml();
+  }
+
+  String nextTwiMLQuestion(Survey survey) throws TwiMLException, UnsupportedEncodingException {
+    return nextTwiMLQuestion(survey, null).toXml();
+  }
+
+  private VoiceResponse nextTwiMLQuestion(Survey survey, VoiceResponse.Builder twiml)
+      throws TwiMLException, UnsupportedEncodingException {
+    Question question = Server.config.getQuestions()[survey.getIndex()];
+
+    return buildQuestionTwiML(survey, question, twiml);
+  }
+
+  private VoiceResponse buildQuestionTwiML(Survey survey, Question question,
+      VoiceResponse.Builder twiml) throws TwiMLException, UnsupportedEncodingException {
+    VoiceResponse.Builder response = twiml != null ? twiml : new VoiceResponse.Builder();
+    Say say = new Say.Builder(question.getText()).build();
+    response.say(say);
+    // Depending on the question type, create different TwiML verbs.
+    switch (question.getType()) {
+      case "text":
+        appendTextQuestion(survey, response);
+        break;
+      case "boolean":
+        appendBooleanQuestion(response);
+        break;
+      case "number":
+        appendNumberQuestion(response);
+        break;
     }
+    return response.build();
+  }
 
-    String nextTwiMLQuestion(Survey survey) throws TwiMLException, UnsupportedEncodingException {
-      return nextTwiMLQuestion(survey, null).toXML();
-    }
+  private VoiceResponse.Builder appendNumberQuestion(VoiceResponse.Builder twiml)
+      throws TwiMLException {
+    Say numInstructions =
+        new Say.Builder("Enter the number on your keypad, followed by the #.").build();
+    twiml.say(numInstructions);
+    // Listen until a user presses "#"
+    Gather numberGather = new Gather.Builder().finishOnKey("#").build();
 
-    private TwiMLResponse nextTwiMLQuestion(Survey survey, TwiMLResponse twiml) throws TwiMLException,
-            UnsupportedEncodingException {
-      Question question = Server.config.getQuestions()[survey.getIndex()];
-      return buildQuestionTwiML(survey, question, twiml);
-    }
+    twiml.gather(numberGather);
 
-    private TwiMLResponse buildQuestionTwiML(Survey survey, Question question, TwiMLResponse twiml) throws TwiMLException, UnsupportedEncodingException {
-      TwiMLResponse response = (twiml != null) ? twiml : new TwiMLResponse();
-      Say say = new Say(question.getText());
-      response.append(say);
-      // Depending on the question type, create different TwiML verbs.
-      switch (question.getType()) {
-        case "text":
-          response = appendTextQuestion(survey, response);
-          break;
-        case "boolean":
-          response = appendBooleanQuestion(response);
-          break;
-        case "number":
-          response = appendNumberQuestion(response);
-          break;
-      }
-      return response;
-    }
+    return twiml;
+  }
 
-    private TwiMLResponse appendNumberQuestion(TwiMLResponse twiml) throws TwiMLException {
-      Say numInstructions = new Say("Enter the number on your keypad, followed by the #.");
-      twiml.append(numInstructions);
-      Gather numberGather = new Gather();
-      // Listen until a user presses "#"
-      numberGather.setFinishOnKey("#");
-      twiml.append(numberGather);
+  private VoiceResponse.Builder appendBooleanQuestion(VoiceResponse.Builder twiml)
+      throws TwiMLException {
+    Say boolInstructions =
+        new Say.Builder("Press 0 to respond 'No,' and press any other number to respond 'Yes.'")
+            .build();
+    twiml.say(boolInstructions);
 
-      return twiml;
-    }
+    // Listen only for one digit.
+    Gather booleanGather = new Gather.Builder().numDigits(1).build();
+    twiml.gather(booleanGather);
 
-    private TwiMLResponse appendBooleanQuestion(TwiMLResponse twiml) throws TwiMLException {
-      Say boolInstructions =
-          new Say("Press 0 to respond 'No,' and press any other number to respond 'Yes.'");
-      twiml.append(boolInstructions);
-      Gather booleanGather = new Gather();
-      // Listen only for one digit.
-      booleanGather.setNumDigits(1);
-      twiml.append(booleanGather);
+    return twiml;
+  }
 
-      return twiml;
-    }
+  private VoiceResponse.Builder appendTextQuestion(Survey survey, VoiceResponse.Builder twiml)
+      throws TwiMLException, UnsupportedEncodingException {
 
-    private TwiMLResponse appendTextQuestion(Survey survey, TwiMLResponse twiml) throws TwiMLException, UnsupportedEncodingException {
-      Say textInstructions =
-          new Say(
-              "Your response will be recorded after the tone. Once you have finished recording, press the #.");
-      twiml.append(textInstructions);
-      Record text = new Record();
-      text.setFinishOnKey("#");
-      // Use the Transcription route to receive the text of a voice response.
-      text.setTranscribe(true);
-      text.setTranscribeCallback("/interview/" + SurveyController.urlEncode(survey.getPhone()) + "/transcribe/"
-          + survey.getIndex());
-      twiml.append(text);
+    Say textInstructions = new Say.Builder(
+        "Your response will be recorded after the tone. Once you have finished recording, press the #.")
+            .build();
+    twiml.say(textInstructions);
+    Record text = new Record.Builder()
+        .finishOnKey("#")
+        .transcribe(true)
+        .transcribeCallback(
+            String.format("/interview/%s/transcribe/%s", urlEncode(survey.getPhone()), survey.getIndex())
+        ).build();
 
-      return twiml;
-    }
+    twiml.record(text);
 
-    String goodByeTwiMLMessage() throws TwiMLException {
-      TwiMLResponse twiml = new TwiMLResponse();
-      twiml.append(new Say("Your responses have been recorded. Thank you for your time!"));
-      return twiml.toXML();
-    }
+    return twiml;
+  }
+
+  // Wrap the URLEncoder and URLDecoder for cleanliness.
+  private String urlEncode(String s) throws UnsupportedEncodingException {
+    return URLEncoder.encode(s, "utf-8");
+  }
+
+  String goodByeTwiMLMessage() throws TwiMLException {
+    VoiceResponse voiceResponse = new VoiceResponse.Builder()
+        .say(new Say.Builder("Your responses have been recorded. Thank you for your time!").build())
+        .build();
+
+    return voiceResponse.toXml();
+  }
 }
