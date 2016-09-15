@@ -22,6 +22,6 @@ public class Server {
     post("/interview", SurveyController.interview);
     post("/interview/:phone/transcribe/:question", SurveyController.transcribe);
     get("/results", SurveyController.results);
-    
+
   }
 }

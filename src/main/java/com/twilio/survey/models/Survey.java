@@ -1,11 +1,11 @@
 package com.twilio.survey.models;
 
-import com.twilio.survey.Server;
-
 import org.bson.types.ObjectId;
 import org.mongodb.morphia.annotations.Embedded;
 import org.mongodb.morphia.annotations.Entity;
 import org.mongodb.morphia.annotations.Id;
+
+import com.twilio.survey.Server;
 
 @Entity
 public class Survey {
@@ -28,7 +28,7 @@ public class Survey {
     this.phone = phone;
     this.index = 0;
   }
-  
+
   public Survey(Survey anotherSurvey) {
     System.arraycopy(anotherSurvey.responses, 0, this.responses, 0, anotherSurvey.responses.length);
     this.id = anotherSurvey.id;
@@ -36,7 +36,7 @@ public class Survey {
     this.index = anotherSurvey.index;
     this.done = anotherSurvey.done;
   }
-  
+
   public Survey() {
     this("+0000000000");
   }

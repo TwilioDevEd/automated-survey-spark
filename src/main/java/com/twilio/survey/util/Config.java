@@ -4,8 +4,8 @@ import java.io.File;
 import java.util.Map;
 import java.util.Scanner;
 
+import com.google.gson.Gson;
 import com.mongodb.MongoClientURI;
-import com.google.gson.*; // TODO: Resolve wildcard import
 
 
 public class Config {

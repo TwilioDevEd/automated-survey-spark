@@ -1,21 +1,19 @@
 package com.twilio.survey.controllers;
 
-import com.twilio.survey.Server;
-import com.twilio.survey.models.Response;
-import com.twilio.survey.models.SurveyService;
-import com.twilio.survey.models.Survey;
-import com.twilio.survey.util.IncomingCall;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.util.HashMap;
+import java.util.Map;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
+import com.twilio.survey.Server;
+import com.twilio.survey.models.Response;
+import com.twilio.survey.models.Survey;
+import com.twilio.survey.models.SurveyService;
+import com.twilio.survey.util.IncomingCall;
 
 import spark.Route;
-
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
-import java.net.URLEncoder;
-import java.util.HashMap;
-import java.util.Map;
 
 public class SurveyController {
   private static SurveyService surveys = new SurveyService(Server.config.getMongoURI());
@@ -45,28 +43,28 @@ public class SurveyController {
   public static Route results = (request, response) -> {
     Gson gson = new Gson();
     JsonObject json = new JsonObject();
-      // Add questions to the JSON response object
-      json.add("survey", gson.toJsonTree(Server.config.getQuestions()));
-      // Add user responses to the JSON response object
-      json.add("results", gson.toJsonTree(surveys.findAllFinishedSurveys()));
-      response.type("application/json");
-      return json;
-    };
+    // Add questions to the JSON response object
+    json.add("survey", gson.toJsonTree(Server.config.getQuestions()));
+    // Add user responses to the JSON response object
+    json.add("results", gson.toJsonTree(surveys.findAllFinishedSurveys()));
+    response.type("application/json");
+    return json;
+  };
 
   // Transcription route (called by Twilio's callback, once transcription is complete)
   public static Route transcribe = (request, response) -> {
     IncomingCall call = IncomingCall.createInstance(parseBody(request.body()));
-      // Get the phone and question numbers from the URL parameters provided by the "Record" verb
-      String surveyId = request.params(":phone");
-      int questionId = Integer.parseInt(request.params(":question"));
-      // Find the survey in the DB...
-      Survey survey = surveys.getSurvey(surveyId);
-      // ...and update it with our transcription text.
-      survey.getResponses()[questionId].setAnswer(call.getTranscriptionText());
-      surveys.updateSurvey(survey);
-      response.status(200);
-      return "OK";
-    };
+    // Get the phone and question numbers from the URL parameters provided by the "Record" verb
+    String surveyId = request.params(":phone");
+    int questionId = Integer.parseInt(request.params(":question"));
+    // Find the survey in the DB...
+    Survey survey = surveys.getSurvey(surveyId);
+    // ...and update it with our transcription text.
+    survey.getResponses()[questionId].setAnswer(call.getTranscriptionText());
+    surveys.updateSurvey(survey);
+    response.status(200);
+    return "OK";
+  };
 
   // Helper methods
 

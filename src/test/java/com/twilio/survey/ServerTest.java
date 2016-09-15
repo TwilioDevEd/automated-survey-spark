@@ -1,11 +1,11 @@
 package com.twilio.survey;
 
-import com.twilio.survey.util.Config;
-
-import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
+
+import com.twilio.survey.util.Config;
 
 public class ServerTest {
   public static Config config;
