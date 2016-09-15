@@ -18,12 +18,13 @@ Heroku will automatically configure the environment variables necessary to launc
 
 1. Clone the repository and `cd` into it.
 
-1. The application uses Maven to manage dependencies.
+1. The application uses Gradle to manage dependencies.
 
 1. Use the following variables to configure this application when running it locally. Heroku will automatically configure these variables for you.
 
    * `PORT`: the application's port number (defaults to port 4567).
-   * `MONGO_URI`: the address of a MongoDB instance to use (defaults to a MongoDB instance listening on the localhost).
+   * `MONGODB_URI`: the address of a MongoDB instance to use (defaults to a MongoDB instance listening on the localhost).
+     Defaults to `Test` if not specified.
 
 1. Configure Twilio to call your webhooks.
 
@@ -38,30 +39,29 @@ Heroku will automatically configure the environment variables necessary to launc
 
    ![Configure Voice](http://howtodocs.s3.amazonaws.com/twilio-number-config-all-med.gif)
 
-1. Run `mvn install` to run the accompanying test suite, and build the application.
-
-1. Use `java -jar target/server.jar` to run the application.
+1. Run `./gradlew run` to run the application.
 
 1. Expose the application to the wider Internet using [ngrok](https://ngrok.com/).
 
    ```bash
-   $ ngrok http 8080
+   $ ngrok http 4567
    ```
 
-   Once you have started ngrok, update your Twilio's number SMS and voice URL
-   setting to use your ngrok hostname. It will look something like
+   Once you have started ngrok, update your Twilio's number voice URL
+   setting to use your ngrok hostname. It should look something like
    this:
 
    ```
-   http://<your-ngrok-subdomaon/automated-survey-servlets/survey
+   http://<your-ngrok-subdomain/interview (POST)
    ```
+1. Call your Twilio number and answer the survey! You can check the results at `http://<your-ngrok-subdomain/`
 
 ### Run the tests
 
 1. Run at the top-level directory.
 
    ```bash
-   $ mvn test
+   $ ./gradle check
    ```
 
 ## Meta
