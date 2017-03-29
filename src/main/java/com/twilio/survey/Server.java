@@ -1,8 +1,10 @@
 package com.twilio.survey;
 
 import static spark.Spark.*;
+import static spark.Spark.afterAfter;
 
 import com.twilio.survey.controllers.SurveyController;
+import com.twilio.survey.logging.LoggingFilter;
 import com.twilio.survey.util.Config;
 
 public class Server {
@@ -23,5 +25,6 @@ public class Server {
     post("/interview/:phone/transcribe/:question", SurveyController.transcribe);
     get("/results", SurveyController.results);
 
+    afterAfter(new LoggingFilter());
   }
 }
