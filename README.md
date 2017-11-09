@@ -8,19 +8,13 @@
 
 An application example that implements an Automated Survey using Twilio.
 
-## Heroku
-
-[![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy)  
-
-Heroku will automatically configure the environment variables necessary to launch this application. Heroku automatically uses a ["Free" dyno](https://www.heroku.com/pricing), and provisions a ["Sandbox" MongoLab](https://mongolab.com/plans/pricing/) instance, so you can play around with this application at no charge.
-
 ## Run the application
 
 1. Clone the repository and `cd` into it.
 
 1. The application uses Gradle to manage dependencies.
 
-1. Use the following variables to configure this application when running it locally. Heroku will automatically configure these variables for you.
+1. Use the following variables to configure this application when running it locally.
 
    * `PORT`: the application's port number (defaults to port 4567).
    * `MONGODB_URI`: the address of a MongoDB instance to use (defaults to a MongoDB instance listening on the localhost).
