@@ -4,6 +4,7 @@
 build/
 bin/
 target/
+classes/
 
 *.war
 *.ear
