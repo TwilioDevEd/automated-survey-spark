@@ -9,7 +9,7 @@ repositories {
 dependencies {
     compile group: 'com.sparkjava', name: 'spark-core', version:'2.5.5'
     compile group: 'com.twilio.sdk', name: 'twilio', version:'7.16.0'
-    compile group: 'org.mongodb', name: 'mongodb-driver', version:'3.0.3'
+    compile group: 'org.mongodb', name: 'mongodb-driver', version:'3.12.8'
     compile group: 'org.mongodb.morphia', name: 'morphia', version:'1.0.1'
     compile group: 'com.google.code.gson', name: 'gson', version:'2.3.1'
     compile group: 'org.hamcrest', name: 'hamcrest-all', version:'1.3'
