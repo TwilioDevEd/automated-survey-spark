@@ -6,9 +6,6 @@
 
 [![Build Status](https://github.com/TwilioDevEd/automated-survey-spark/actions/workflows/gradle.yml/badge.svg)](https://github.com/TwilioDevEd/automated-survey-spark/actions/workflows/gradle.yml)
 
-
-[![Build Status](https://travis-ci.org/TwilioDevEd/automated-survey-spark.svg?branch=master)](https://travis-ci.org/TwilioDevEd/automated-survey-spark)
-
 An application example that implements an Automated Survey using Twilio.
 
 ## Run the application
