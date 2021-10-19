@@ -21,8 +21,9 @@ jobs:
     strategy:
       max-parallel: 3
       matrix:
-        os: [ubuntu-latest, macos-latest, windows-latest]
+        os: [ubuntu-latest]
         java: [ 8 ]
+        mongodb-version: ['4.4']
 
     steps:
       - name: Checkout code
