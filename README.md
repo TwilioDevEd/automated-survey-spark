@@ -58,6 +58,14 @@ An application example that implements an Automated Survey using Twilio.
    $ ./gradle check
    ```
 
+### Running MongoDB on Mac OS
+
+To run MongoDB on Mac OS in the foreground, after installing from brew:
+
+```bash
+mongod --config /opt/homebrew/etc/mongod.conf
+```
+
 ## Meta
 
 * No warranty expressed or implied. Software is as is. Diggity.
