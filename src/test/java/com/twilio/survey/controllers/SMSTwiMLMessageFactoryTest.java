@@ -36,7 +36,7 @@ public class SMSTwiMLMessageFactoryTest {
     Document twiMLDocument = XMLTestHelper.createDocumentFromXml(twiml);
     Node responseNode = twiMLDocument.getElementsByTagName("Response").item(0);
 
-    assertThat(responseNode, hasXPath("/Response/Message/Body[text() = "
+    assertThat(responseNode, hasXPath("/Response/Message[text() = "
         + "'Your responses have been recorded. Thank you for your time!']"));
   }
 
@@ -52,9 +52,9 @@ public class SMSTwiMLMessageFactoryTest {
     Node responseNode = twiMLDocument.getElementsByTagName("Response").item(0);
 
     assertThat(responseNode,
-        hasXPath("/Response/Message/Body[text() = " + "'Thanks for taking our survey.']"));
+        hasXPath("/Response/Message[text() = " + "'Thanks for taking our survey.']"));
     assertThat(responseNode,
-        hasXPath("/Response/Message/Body[text() = " + "'Please tell us your age.']"));
+        hasXPath("/Response/Message[text() = " + "'Please tell us your age.']"));
   }
 
   @Test
@@ -70,6 +70,6 @@ public class SMSTwiMLMessageFactoryTest {
     Node responseNode = twiMLDocument.getElementsByTagName("Response").item(0);
 
     Assert.assertThat(responseNode,
-        hasXPath("/Response/Message/Body[text() = 'Please tell us your age.']"));
+        hasXPath("/Response/Message[text() = 'Please tell us your age.']"));
   }
 }
